@@ -62,10 +62,11 @@ stock["ReturnLag3"] = stock["Return"].shift(3)
 # RSI
 # =========================
 
-delta = stock["Close"].diff()
-gain = delta.clip(lower=0)
-loss = -delta.clip(upper=0)
-average_gain = gain.rolling(window=14).mean()
+delta = stock["Close"].diff() #current - previous
+gain = delta.clip(lower=0) #limit value, dont allow anything below 0
+loss = -delta.clip(upper=0) #limit value, dont allow anything above 0
+average_gain = gain.rolling(window=14).mean() 
+# look at the most recent 14 values at a time, Calculate the average gain over the last 14 periods.
 average_loss = loss.rolling(window=14).mean()
 rs = average_gain / average_loss
 stock["RSI"] = 100 - (100 / (1 + rs))
@@ -74,8 +75,9 @@ stock["RSI"] = 100 - (100 / (1 + rs))
 # MACD
 # =========================
 
-ema12 = stock["Close"].ewm(span=12, adjust=False).mean()
-ema26 = stock["Close"].ewm(span=26, adjust=False).mean()
+#Create a slower moving average using 26 periods, also giving recent prices more importance.
+ema12 = stock["Close"].ewm(span=12, adjust=False).mean() # ewm = a moving average that reacts faster to recent price changes
+ema26 = stock["Close"].ewm(span=26, adjust=False).mean() # span = time period of the EMA, adjust = step by step
 stock["MACD"] = ema12 - ema26
 stock["MACD_Signal"] = (stock["MACD"].ewm(span=9, adjust=False).mean())
 stock["MACD_Hist"] = (stock["MACD"] - stock["MACD_Signal"])
