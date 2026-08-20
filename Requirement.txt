@@ -1,3 +1,6 @@
 pandas
-matplotlib
+numpy
 scikit-learn
+matplotlib
+joblib
+yfinance
